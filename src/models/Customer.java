@@ -1,25 +1,16 @@
 package models;
 
-public class Customer  extends Account {
+public class Customer extends Account {
 
-    private int customerId;
     private boolean isBanned;
     private String creditCard;
 
-    public Customer(int customerId, String lastName, String firstName, String phoneNum, String email, String hashPassword, boolean isBanned, String creditCard) {
-        super(customerId, lastName, firstName, phoneNum, email, hashPassword);
-        this.customerId = customerId;
+    public Customer(int accountId, String lastName, String firstName, 
+                    String phoneNum, String email, String hashPassword, 
+                    boolean isBanned, String creditCard) {
+        super(accountId, lastName, firstName, phoneNum, email, hashPassword);
         this.isBanned = isBanned;
         this.creditCard = creditCard;
-    }
-
-    // Getters and Setters
-    public int getCustomerId() {
-        return customerId;
-    }
-
-    public void setCustomerId(int customerId) {
-        this.customerId = customerId;
     }
 
     public boolean isBanned() {
