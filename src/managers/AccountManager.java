@@ -2,17 +2,17 @@ package managers;
 
 import models.Account;
 import models.Customer;
-import utils.FileHandler;
+import utils.XlsxReader;
 import java.util.ArrayList;
 
 public class AccountManager {
     
     private ArrayList<Customer> listOfAccounts;
-    private FileHandler fileHandler;
+    private XlsxReader xlsxReader;
     
     public AccountManager() {
-        fileHandler = new FileHandler();
-        listOfAccounts = fileHandler.loadCustomers();
+        xlsxReader = new XlsxReader();
+        listOfAccounts = xlsxReader.loadCustomers();
     }
     
     public boolean createNewAccount(Customer customer) {
@@ -22,7 +22,7 @@ public class AccountManager {
             }
         }
         listOfAccounts.add(customer);
-        fileHandler.saveCustomers(listOfAccounts);
+        xlsxReader.saveCustomers(listOfAccounts);
         return true;
     }
     
@@ -30,7 +30,7 @@ public class AccountManager {
         for (int i = 0; i < listOfAccounts.size(); i++) {
             if (listOfAccounts.get(i).getAccountId() == accountId) {
                 listOfAccounts.set(i, updatedCustomer);
-                fileHandler.saveCustomers(listOfAccounts);
+                xlsxReader.saveCustomers(listOfAccounts);
                 return true;
             }
         }
@@ -41,7 +41,7 @@ public class AccountManager {
         for (int i = 0; i < listOfAccounts.size(); i++) {
             if (listOfAccounts.get(i).getAccountId() == accountId) {
                 listOfAccounts.remove(i);
-                fileHandler.saveCustomers(listOfAccounts);
+                xlsxReader.saveCustomers(listOfAccounts);
                 return true;
             }
         }
@@ -84,7 +84,7 @@ public class AccountManager {
         Customer customer = getCustomerById(accountId);
         if (customer != null) {
             customer.setBanned(true);
-            fileHandler.saveCustomers(listOfAccounts);
+            xlsxReader.saveCustomers(listOfAccounts);
             return true;
         }
         return false;
@@ -94,7 +94,7 @@ public class AccountManager {
         Customer customer = getCustomerById(accountId);
         if (customer != null) {
             customer.setBanned(false);
-            fileHandler.saveCustomers(listOfAccounts);
+            xlsxReader.saveCustomers(listOfAccounts);
             return true;
         }
         return false;
