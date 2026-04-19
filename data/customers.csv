@@ -1,0 +1,4 @@
+customerId,lastName,firstName,phoneNum,email,hashPassword,isBanned,creditCard
+1001,Doe,John,(555) 555-1212,jd@sample.net,password123,false,XXXX-1111
+1002,Smith,Jane,(555) 555-3434,js@live.com,password456,false,XXXX-2222
+1003,Lee,Michael,(555) 555-5656,ml@sample.net,password789,false,XXXX-3333
