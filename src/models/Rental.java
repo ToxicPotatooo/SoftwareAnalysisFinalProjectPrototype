@@ -1,98 +1,100 @@
 package models;
 
-import java.util.ArrayList;
 import java.util.Date;
 
 public class Rental {
+
     private int id;
     private Date curDate;
-    private int customerId;
+    private int cusId;
+    private int equipId;
     private Date rentalDate;
     private Date returnDate;
-    private ArrayList<Integer> listOfEquipmentRented;
+    //private ArrayList<Equipment> equipmentRented;
     private double rentalCost;
     
-    public Rental(int id, Date curDate, int customerId, Date rentalDate, 
-                  Date returnDate, ArrayList<Integer> listOfEquipmentRented, double rentalCost) {
-        this.id = id;
-        this.curDate = curDate;
-        this.customerId = customerId;
-        this.rentalDate = rentalDate;
-        this.returnDate = returnDate;
-        this.listOfEquipmentRented = listOfEquipmentRented;
-        this.rentalCost = rentalCost;
+    
+    public Rental(int id, Date curDate, int cusId, int equipId, Date rentalDate, Date returnDate,
+	    double rentalCost) {
+	
+	this.id = id;
+	this.curDate = curDate;
+	this.cusId = cusId;
+	this.equipId = equipId;
+	this.rentalDate = rentalDate;
+	this.returnDate = returnDate;
+	this.rentalCost = rentalCost;
+    }
+    
+    @Override
+    public String toString() {
+	return "Rental [id=" + id + ", curDate=" + curDate + ", cusId=" + cusId + ", equipId=" + equipId
+		+ ", rentalDate=" + rentalDate + ", returnDate=" + returnDate + ", rentalCost=" + rentalCost + "]";
     }
 
     public int getId() {
         return id;
     }
 
-    public void setId(int id) {
-        this.id = id;
-    }
-
     public Date getCurDate() {
         return curDate;
     }
 
-    public void setCurDate(Date curDate) {
-        this.curDate = curDate;
+    public int getCusId() {
+        return cusId;
     }
 
-    public int getCustomerId() {
-        return customerId;
-    }
-
-    public void setCustomerId(int customerId) {
-        this.customerId = customerId;
+    public int getEquipId() {
+        return equipId;
     }
 
     public Date getRentalDate() {
         return rentalDate;
     }
 
-    public void setRentalDate(Date rentalDate) {
-        this.rentalDate = rentalDate;
-    }
-
     public Date getReturnDate() {
         return returnDate;
+    }
+
+//    public ArrayList<Equipment> getEquipmentRented() {
+//        return equipmentRented;
+//    }
+
+    public double getRentalCost() {
+        return rentalCost;
+    }
+
+    public void setId(int id) {
+        this.id = id;
+    }
+
+    public void setCurDate(Date curDate) {
+        this.curDate = curDate;
+    }
+
+    public void setCusId(int cusId) {
+        this.cusId = cusId;
+    }
+
+    public void setEquipId(int equipId) {
+        this.equipId = equipId;
+    }
+
+    public void setRentalDate(Date rentalDate) {
+        this.rentalDate = rentalDate;
     }
 
     public void setReturnDate(Date returnDate) {
         this.returnDate = returnDate;
     }
 
-    public ArrayList<Integer> getListOfEquipmentRented() {
-        return listOfEquipmentRented;
-    }
-
-    public void setListOfEquipmentRented(ArrayList<Integer> listOfEquipmentRented) {
-        this.listOfEquipmentRented = listOfEquipmentRented;
-    }
-
-    public double getRentalCost() {
-        return rentalCost;
-    }
+//    public void setEquipmentRented(ArrayList<Equipment> equipmentRented) {
+//        this.equipmentRented = equipmentRented;
+//    }
 
     public void setRentalCost(double rentalCost) {
         this.rentalCost = rentalCost;
     }
 
-    @Override
-    public String toString() {
-        return "Rental #" + id + " | Customer ID: " + customerId + " | Cost: $" + rentalCost;
-    }
-
-    public String toCSV() {
-        StringBuilder equipStr = new StringBuilder();
-        for (int i = 0; i < listOfEquipmentRented.size(); i++) {
-            if (i > 0) equipStr.append(";");
-            equipStr.append(listOfEquipmentRented.get(i));
-        }
         
-        return id + "," + curDate.getTime() + "," + customerId + "," + 
-               rentalDate.getTime() + "," + returnDate.getTime() + "," + 
-               equipStr.toString() + "," + rentalCost;
-    }
 }

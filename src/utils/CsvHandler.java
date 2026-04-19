@@ -1,0 +1,187 @@
+package utils;
+
+import java.io.BufferedReader;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.io.IOException;
+import java.io.PrintWriter;
+
+import java.sql.Date;
+
+import models.*;
+
+enum Section {
+    NONE,
+    CATEGORIES,
+    EQUIPMENT,
+    CUSTOMERS,
+    RENTALS
+}
+
+public class CsvHandler {   
+
+    static String FILEPATH = "res/data-samples.csv";
+    
+    //read file
+    public static DataArrays csvReader() {
+	
+	DataArrays data = new DataArrays();
+	Section section = Section.NONE;
+	
+	try (BufferedReader br = new BufferedReader(new FileReader(FILEPATH))) {
+	    
+	    String line;
+	    
+	    while ((line = br.readLine()) != null) {
+		
+		//section detection
+		if (line.equalsIgnoreCase("CATEGORY LIST")) {
+		    section = Section.CATEGORIES;
+		    continue;
+		}
+		if (line.equalsIgnoreCase("RENTAL EQUIPMENT")) {
+		    section = Section.EQUIPMENT;
+		    continue;
+		}
+		if (line.equalsIgnoreCase("CUSTOMER INFORMATION")) {
+		    section = Section.CUSTOMERS;
+		    continue;
+		}
+		if (line.equalsIgnoreCase("RENTAL INFORMATION")) {
+		    section = Section.RENTALS;
+		    continue;
+		}
+		
+		//header skip
+		if (line.contains("equipment_id") ||
+			line.contains("customer_id") ||
+			line.contains("rental_id")) {
+		    continue;
+		}
+		
+		String[] pLine = line.split(",");
+		
+		//data parsing
+		switch (section) {
+			
+			case EQUIPMENT:
+			    
+			    int equipId = Integer.valueOf(pLine[0]);
+			    int catId = Integer.valueOf(pLine[1]);
+			    String name = pLine[2];
+			    String desc = pLine[3];
+			    double dRate = Double.valueOf(pLine[4]);
+			    
+			    data.getEquipData().add(new Equipment(equipId, catId, name, desc, dRate));
+			    
+			    break;
+			    
+			case CUSTOMERS:
+			    
+			    int cusId = Integer.valueOf(pLine[0]);
+			    String lName = pLine[1];
+			    String fName = pLine[2];
+			    String phone = pLine[3];
+			    String eMail = pLine[4];
+			    
+			    data.getAccountData().add(new Account(cusId, lName, fName, phone, eMail));
+			    
+			    break;
+			
+			case RENTALS:
+			    
+			    int rentId = Integer.valueOf(pLine[0]);
+			    Date curDate = Date.valueOf(pLine[1]);
+			    int cusId2 = Integer.valueOf(pLine[2]);
+			    int equipId2 = Integer.valueOf(pLine[3]);
+			    Date rentDate = Date.valueOf(pLine[4]);
+			    Date returnDate = Date.valueOf(pLine[5]);
+			    double cost = Double.valueOf(pLine[6]);
+			    
+			    data.getRentalData().add(new Rental(rentId, curDate, cusId2, equipId2, rentDate, returnDate, cost));
+			    
+			    break;
+			
+			default:
+			    break;
+		}
+	    }
+	    
+	} catch (FileNotFoundException e) {
+	    e.printStackTrace();
+	} catch (IOException e) {
+	    e.printStackTrace();
+	}
+	
+	return data;
+    }
+    
+    public static boolean csvWriter(DataArrays data) {
+	
+	try (PrintWriter pw = new PrintWriter(FILEPATH)) {
+	    
+	    StringBuilder sb = new StringBuilder();
+	    
+	    //header
+	    sb.append("Category List\n");
+	    
+	    //categories
+	    sb.append("category id,name\n");
+	    sb.append("10,Power Tools\n");
+	    sb.append("20,Yard Equipment\n");
+	    sb.append("30,Compressors\n");
+	    sb.append("40,Generators\n");
+	    sb.append("50,AirTools\n");
+	    
+	    //equip
+	    sb.append("Rental Equipment\n");
+	    sb.append("equipment_id,category_id,name,description,daily_rate\n");
+	    
+	    for (Equipment e : data.getEquipData()) {
+		int equipId = e.getEquipmentId();
+		int catId = e.getCategoryId();
+		String name = e.getName();
+		String desc = e.getDesc();
+		double cost = e.getDailyRentCost();
+		
+		sb.append(equipId + "," + catId + "," + name + "," + desc + "," + cost + "\n");
+	    }
+	    
+	    //customer
+	    sb.append("Customer Information\n");
+	    sb.append("customer_id,last_name,first_name,contact_phone,e-mail\n");
+	    
+	    for (Account a : data.getAccountData()) {
+		int accountId = a.getAccountId();
+		String lName = a.getLastName();
+		String fName = a.getFirstName();
+		String phone = a.getPhoneNumber();
+		String email = a.getEmail();
+		
+		sb.append(accountId + "," + lName + "," + fName + "," + phone + "," + email + "\n");
+	    }
+	    
+	    //rental
+	    sb.append("Rental Information\n");
+	    sb.append("rental_id,date,customer_id,equipment_id,rental_date,return_date,cost\n");
+	    
+	    for (Rental r : data.getRentalData()) {
+		int rentId = r.getId();
+		Date curDate = (Date) r.getCurDate();
+		int cusId = r.getCusId();
+		int equipId = r.getEquipId();
+		Date rentDate = (Date) r.getRentalDate();
+		Date returnDate = (Date) r.getReturnDate();
+		double cost = r.getRentalCost();
+		
+		sb.append(rentId + "," + curDate + "," + cusId + "," + equipId + "," + rentDate + "," + returnDate + "," + cost + "\n");
+	    }
+	    
+	} catch (FileNotFoundException e) {
+	    // TODO Auto-generated catch block
+	    e.printStackTrace();
+	}
+	
+	return false;
+    }
+}
