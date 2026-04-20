@@ -10,9 +10,9 @@ public class EquipmentManager {
     private ArrayList<Equipment> listOfEquipment;
     private DataArrays data;
     
-    public EquipmentManager() {
-        data = CsvHandler.csvReader();
-        listOfEquipment = data.getEquipData();
+    public EquipmentManager(DataArrays data) {
+        this.data = data;
+        this.listOfEquipment = data.getEquipData();
     }
     
     private void saveData() {
