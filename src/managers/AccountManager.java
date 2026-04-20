@@ -11,9 +11,9 @@ public class AccountManager {
     private ArrayList<Customer> listOfAccounts;
     private DataArrays data;
     
-    public AccountManager() {
-        data = CsvHandler.csvReader();
-        listOfAccounts = new ArrayList<>();
+    public AccountManager(DataArrays data) {
+        this.data = data;
+        this.listOfAccounts = new ArrayList<>();
         
         for (Account acc : data.getAccountData()) {
             Customer customer = new Customer(
