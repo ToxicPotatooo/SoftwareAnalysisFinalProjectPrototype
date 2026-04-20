@@ -16,11 +16,14 @@ public class RentalManager {
     private EquipmentManager equipmentManager;
     private AccountManager accountManager;
     
-    public RentalManager(EquipmentManager equipmentManager, AccountManager accountManager) {
+    public RentalManager(DataArrays data) {
+        this.data = data;
+        this.listOfRentals = data.getRentalData();
+    }
+    
+    public void setManagers(EquipmentManager equipmentManager, AccountManager accountManager) {
         this.equipmentManager = equipmentManager;
         this.accountManager = accountManager;
-        this.data = CsvHandler.csvReader();
-        this.listOfRentals = data.getRentalData();
     }
     
     private void saveData() {
@@ -110,6 +113,22 @@ public class RentalManager {
             return false;
         }
         return true;
+    }
+    
+    public Rental processRental(Customer customer, Equipment equipment, Date rentalDate, Date returnDate) {
+        if (customer.isBanned()) {
+            throw new IllegalArgumentException("Customer is banned.");
+        }
+        
+        int rentalId = getNextId();
+        Date curDate = new Date();
+        
+        Rental rental = new Rental(rentalId, curDate, customer.getAccountId(), equipment.getEquipmentId(), rentalDate, returnDate, 0);
+        double cost = calculateRentalCost(rental);
+        rental.setRentalCost(cost);
+        
+        createRental(rental);
+        return rental;
     }
     
     public int getNextId() {
