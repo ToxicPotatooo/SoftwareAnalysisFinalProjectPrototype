@@ -17,6 +17,11 @@ import models.Rental;
 import utils.CsvHandler;
 import utils.DataArrays;
 
+/**
+ * Manages the user interface for the Village Rentals application.
+ * Provides a console-like menu system using Swing dialogs for all user interactions,
+ * including equipment management, customer management, rental processing, and report viewing.
+ */
 public class UIManager {
     
     private DataArrays data;
@@ -25,6 +30,10 @@ public class UIManager {
     private RentalManager rentalManager;
     private ReportManager reportManager;
     
+    /**
+     * Constructs a UIManager and initializes the application.
+     * Loads data from CSV, initializes all managers, and displays the main menu.
+     */
     public UIManager() {
         data = CsvHandler.csvReader();
         accountManager = new AccountManager(data);
@@ -35,6 +44,10 @@ public class UIManager {
         showMainMenu();
     }
     
+    /**
+     * Displays the main menu and handles user selection.
+     * Continues to show the menu until the user chooses to exit.
+     */
     public void showMainMenu() {
         while (true) {
             String menu = """
@@ -70,6 +83,10 @@ public class UIManager {
         }
     }
     
+    /**
+     * Prompts the user for equipment details and adds a new equipment item to the system.
+     * Automatically assigns the next available equipment ID.
+     */
     private void addEquipment() {
         try {
             int id = equipmentManager.getNextId();
@@ -88,6 +105,9 @@ public class UIManager {
         }
     }
     
+    /**
+     * Prompts the user for an equipment ID and deletes the corresponding equipment from the system.
+     */
     private void deleteEquipment() {
         try {
             int equipmentId = Integer.parseInt(prompt("Enter equipment ID to delete:"));
@@ -104,6 +124,10 @@ public class UIManager {
         }
     }
     
+    /**
+     * Prompts the user for customer details and adds a new customer account to the system.
+     * Automatically assigns the next available customer ID and uses default values for password and credit card.
+     */
     private void addCustomer() {
         try {
             int id = accountManager.getNextId();
@@ -123,6 +147,11 @@ public class UIManager {
         }
     }
     
+    /**
+     * Processes a rental transaction by prompting the user for customer ID, equipment ID, and rental dates.
+     * Validates that the customer exists, is not banned, and that the equipment exists.
+     * Displays the calculated rental cost upon successful creation.
+     */
     private void processRental() {
         try {
             int customerId = Integer.parseInt(prompt("Enter customer ID:"));
@@ -163,6 +192,13 @@ public class UIManager {
         }
     }
     
+    /**
+     * Displays a prompt dialog and returns the user's input.
+     *
+     * @param message the message to display in the prompt dialog
+     * @return the trimmed user input
+     * @throws IllegalArgumentException if the user cancels or enters an empty string
+     */
     private String prompt(String message) {
         String input = JOptionPane.showInputDialog(null, message, "Village Rentals", JOptionPane.PLAIN_MESSAGE);
         if (input == null) {
@@ -175,6 +211,12 @@ public class UIManager {
         return input;
     }
     
+    /**
+     * Displays a message in a scrollable text area dialog for viewing large amounts of text.
+     *
+     * @param message the message content to display
+     * @param title   the title of the dialog window
+     */
     private void showMessage(String message, String title) {
         JTextArea textArea = new JTextArea(message, 20, 50);
         textArea.setLineWrap(true);
