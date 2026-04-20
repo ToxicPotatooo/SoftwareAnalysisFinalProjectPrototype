@@ -48,6 +48,12 @@ public class CsvHandler {
 	    String line;
 	    
 		while ((line = br.readLine()) != null) {
+
+		//System.out.println("Section: " + section + " | Line: " + line);
+		
+		if (line.trim().isEmpty() || line.startsWith(",")) {
+		    continue;
+		}
 		
 		//section detection
 		if (line.toUpperCase().contains("CATEGORY LIST")) {
@@ -67,11 +73,6 @@ public class CsvHandler {
 		    continue;
 		}
 		
-		//System.out.println("Section: " + section + " | Line: " + line);
-		
-		if (line.trim().isEmpty() || line.startsWith(",")) {
-		    continue;
-		}
 		
 		// Skip header rows that contain column names
 		if (line.contains("equipment_id") ||

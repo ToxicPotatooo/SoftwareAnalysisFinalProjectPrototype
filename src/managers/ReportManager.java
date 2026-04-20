@@ -12,12 +12,32 @@ import models.Customer;
 import models.Equipment;
 import models.Rental;
 
+/**
+ * Manages the generation of various business reports for the Village Rentals application.
+ * Provides reporting capabilities including sales analysis by date range, customer spending
+ * summaries, and equipment inventory organization by category.
+ */
 public class ReportManager {
     
     private SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
     
+    /**
+     * Constructs a new ReportManager instance.
+     */
     public ReportManager() {}
     
+    /**
+     * Generates a sales report filtered by a specific date range.
+     * Displays all rentals occurring between the start and end dates, including
+     * rental details, customer information, equipment rented, and total revenue.
+     *
+     * @param rentals the complete list of all rental transactions
+     * @param equipmentList the complete list of all equipment for name lookup
+     * @param customerList the complete list of all customers for name lookup
+     * @param startDate the beginning date of the report range (inclusive)
+     * @param endDate the ending date of the report range (inclusive)
+     * @return a formatted string containing the sales report for the specified date range
+     */
     public String buildSalesByDateReport(ArrayList<Rental> rentals, 
                                           ArrayList<Equipment> equipmentList,
                                           ArrayList<Customer> customerList,
@@ -73,6 +93,16 @@ public class ReportManager {
         return report.toString();
     }
     
+    /**
+     * Generates a sales report grouped by customer.
+     * Displays each customer's total spending, rental count, and detailed rental history,
+     * sorted by total amount spent from highest to lowest.
+     *
+     * @param rentals the complete list of all rental transactions
+     * @param equipmentList the complete list of all equipment for name lookup
+     * @param customerList the complete list of all customers for name lookup
+     * @return a formatted string containing customer sales summary with details
+     */
     public String buildSalesByCustomerReport(ArrayList<Rental> rentals,
                                               ArrayList<Equipment> equipmentList,
                                               ArrayList<Customer> customerList) {
@@ -137,6 +167,14 @@ public class ReportManager {
         return report.toString();
     }
     
+    /**
+     * Generates an inventory report organizing equipment by category.
+     * Displays all equipment grouped by their category ID, including names,
+     * daily rental rates, descriptions, and item counts per category.
+     *
+     * @param equipmentList the complete list of all equipment to categorize
+     * @return a formatted string containing equipment organized by category
+     */
     public String buildItemsByCategoryReport(ArrayList<Equipment> equipmentList) {
         
         if (equipmentList == null || equipmentList.isEmpty()) {
@@ -185,6 +223,13 @@ public class ReportManager {
         return report.toString();
     }
     
+    /**
+     * Retrieves a customer's full name by their account ID.
+     *
+     * @param customerList the list of all customers to search
+     * @param customerId the customer ID to look up
+     * @return the customer's first and last name, or an unknown customer message if not found
+     */
     private String getCustomerNameById(ArrayList<Customer> customerList, int customerId) {
         for (Customer customer : customerList) {
             if (customer.getAccountId() == customerId) {
@@ -194,6 +239,13 @@ public class ReportManager {
         return "Unknown Customer (ID: " + customerId + ")";
     }
     
+    /**
+     * Retrieves an equipment name by its equipment ID.
+     *
+     * @param equipmentList the list of all equipment to search
+     * @param equipmentId the equipment ID to look up
+     * @return the equipment name, or an unknown equipment message if not found
+     */
     private String getEquipmentNameById(ArrayList<Equipment> equipmentList, int equipmentId) {
         for (Equipment equipment : equipmentList) {
             if (equipment.getEquipmentId() == equipmentId) {
@@ -203,6 +255,12 @@ public class ReportManager {
         return "Unknown Equipment (ID: " + equipmentId + ")";
     }
     
+    /**
+     * Converts a category ID to its display name.
+     *
+     * @param categoryId the numeric category identifier
+     * @return the human-readable category name
+     */
     private String getCategoryName(int categoryId) {
         switch (categoryId) {
             case 10: return "Power Tools";
@@ -214,6 +272,13 @@ public class ReportManager {
         }
     }
     
+    /**
+     * Truncates a string to a specified maximum length, adding ellipsis if truncated.
+     *
+     * @param str the string to truncate
+     * @param maxLength the maximum allowed length
+     * @return the truncated string with ellipsis, or the original string if within limits
+     */
     private String truncateString(String str, int maxLength) {
         if (str == null) return "";
         if (str.length() <= maxLength) return str;
