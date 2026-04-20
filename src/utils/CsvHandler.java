@@ -32,23 +32,29 @@ public class CsvHandler {
 	    
 	    String line;
 	    
-	    while ((line = br.readLine()) != null) {
+		while ((line = br.readLine()) != null) {
 		
 		//section detection
-		if (line.equalsIgnoreCase("CATEGORY LIST")) {
+		if (line.toUpperCase().contains("CATEGORY LIST")) {
 		    section = Section.CATEGORIES;
 		    continue;
 		}
-		if (line.equalsIgnoreCase("RENTAL EQUIPMENT")) {
+		if (line.toUpperCase().contains("RENTAL EQUIPMENT")) {
 		    section = Section.EQUIPMENT;
 		    continue;
 		}
-		if (line.equalsIgnoreCase("CUSTOMER INFORMATION")) {
+		if (line.toUpperCase().contains("CUSTOMER INFORMATION")) {
 		    section = Section.CUSTOMERS;
 		    continue;
 		}
-		if (line.equalsIgnoreCase("RENTAL INFORMATION")) {
+		if (line.toUpperCase().contains("RENTAL INFORMATION")) {
 		    section = Section.RENTALS;
+		    continue;
+		}
+		
+		//System.out.println("Section: " + section + " | Line: " + line);
+		
+		if (line.trim().isEmpty() || line.startsWith(",")) {
 		    continue;
 		}
 		
