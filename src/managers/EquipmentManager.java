@@ -13,6 +13,9 @@ public class EquipmentManager {
     public EquipmentManager(DataArrays data) {
         this.data = data;
         this.listOfEquipment = data.getEquipData();
+        if (this.listOfEquipment == null) {
+            this.listOfEquipment = new ArrayList<>();
+        }
     }
     
     private void saveData() {
@@ -20,26 +23,18 @@ public class EquipmentManager {
         CsvHandler.csvWriter(data);
     }
     
-    public boolean createNewEquipment(Equipment newEquipment) {
+    public void addEquipment(Equipment equipment) {
         for (Equipment e : listOfEquipment) {
-            if (e.getEquipmentId() == newEquipment.getEquipmentId()) {
-                return false;
+            if (e.getEquipmentId() == equipment.getEquipmentId()) {
+                throw new IllegalArgumentException("Equipment ID already exists.");
             }
         }
-        listOfEquipment.add(newEquipment);
+        listOfEquipment.add(equipment);
         saveData();
-        return true;
     }
     
-    public boolean updateEquipment(int targetEquipmentID, Equipment updatedEquipment) {
-        for (int i = 0; i < listOfEquipment.size(); i++) {
-            if (listOfEquipment.get(i).getEquipmentId() == targetEquipmentID) {
-                listOfEquipment.set(i, updatedEquipment);
-                saveData();
-                return true;
-            }
-        }
-        return false;
+    public void createNewEquipment(Equipment equipment) {
+        addEquipment(equipment);
     }
     
     public boolean deleteEquipment(int equipmentId) {
@@ -53,16 +48,11 @@ public class EquipmentManager {
         return false;
     }
     
-    public boolean reportEquipmentAsDamaged(int equipmentId) {
-        for (Equipment e : listOfEquipment) {
-            if (e.getEquipmentId() == equipmentId) {
-                return deleteEquipment(equipmentId);
-            }
-        }
-        return false;
+    public ArrayList<Equipment> getListOfEquipment() {
+        return listOfEquipment;
     }
     
-    public ArrayList<Equipment> getListOfEquipment() {
+    public ArrayList<Equipment> getAllEquipment() {
         return listOfEquipment;
     }
     
@@ -75,14 +65,8 @@ public class EquipmentManager {
         return null;
     }
     
-    public ArrayList<Equipment> getEquipmentByCategory(int categoryId) {
-        ArrayList<Equipment> result = new ArrayList<>();
-        for (Equipment e : listOfEquipment) {
-            if (e.getCategoryId() == categoryId) {
-                result.add(e);
-            }
-        }
-        return result;
+    public Equipment findEquipmentById(int id) {
+        return getEquipmentById(id);
     }
     
     public int getNextId() {
@@ -93,5 +77,23 @@ public class EquipmentManager {
             }
         }
         return maxId + 1;
+    }
+    
+    public int getNextEquipmentId() {
+        return getNextId();
+    }
+    
+    public ArrayList<Equipment> getEquipmentByCategory(int categoryId) {
+        ArrayList<Equipment> result = new ArrayList<>();
+        for (Equipment e : listOfEquipment) {
+            if (e.getCategoryId() == categoryId) {
+                result.add(e);
+            }
+        }
+        return result;
+    }
+    
+    public boolean reportEquipmentAsDamaged(int equipmentId) {
+        return deleteEquipment(equipmentId);
     }
 }

@@ -3,6 +3,7 @@ package managers;
 import models.Rental;
 import models.Equipment;
 import models.Customer;
+import models.Account;
 import utils.CsvHandler;
 import utils.DataArrays;
 import java.util.ArrayList;
@@ -19,6 +20,9 @@ public class RentalManager {
     public RentalManager(DataArrays data) {
         this.data = data;
         this.listOfRentals = data.getRentalData();
+        if (this.listOfRentals == null) {
+            this.listOfRentals = new ArrayList<>();
+        }
     }
     
     public void setManagers(EquipmentManager equipmentManager, AccountManager accountManager) {
@@ -31,21 +35,13 @@ public class RentalManager {
         CsvHandler.csvWriter(data);
     }
     
-    public boolean createRental(Rental rental) {
+    public void addRental(Rental rental) {
         listOfRentals.add(rental);
         saveData();
-        return true;
     }
     
-    public boolean updateRental(int rentalId, Rental updatedRental) {
-        for (int i = 0; i < listOfRentals.size(); i++) {
-            if (listOfRentals.get(i).getId() == rentalId) {
-                listOfRentals.set(i, updatedRental);
-                saveData();
-                return true;
-            }
-        }
-        return false;
+    public void createRental(Rental rental) {
+        addRental(rental);
     }
     
     public boolean deleteRental(int rentalId) {
@@ -63,6 +59,10 @@ public class RentalManager {
         return listOfRentals;
     }
     
+    public ArrayList<Rental> getRentals() {
+        return listOfRentals;
+    }
+    
     public Rental getRentalById(int id) {
         for (Rental r : listOfRentals) {
             if (r.getId() == id) {
@@ -70,26 +70,6 @@ public class RentalManager {
             }
         }
         return null;
-    }
-    
-    public ArrayList<Rental> getRentalsByCustomerId(int customerId) {
-        ArrayList<Rental> result = new ArrayList<>();
-        for (Rental r : listOfRentals) {
-            if (r.getCusId() == customerId) {
-                result.add(r);
-            }
-        }
-        return result;
-    }
-    
-    public ArrayList<Rental> getRentalsByDateRange(Date startDate, Date endDate) {
-        ArrayList<Rental> result = new ArrayList<>();
-        for (Rental r : listOfRentals) {
-            if (r.getRentalDate().after(startDate) && r.getRentalDate().before(endDate)) {
-                result.add(r);
-            }
-        }
-        return result;
     }
     
     public double calculateRentalCost(Rental rental) {
@@ -131,6 +111,14 @@ public class RentalManager {
         return rental;
     }
     
+    public Rental processRental(Account account, Equipment equipment, Date rentalDate, Date returnDate) {
+        Customer customer = accountManager.getCustomerById(account.getAccountId());
+        if (customer == null) {
+            throw new IllegalArgumentException("Customer not found.");
+        }
+        return processRental(customer, equipment, rentalDate, returnDate);
+    }
+    
     public int getNextId() {
         int maxId = 0;
         for (Rental r : listOfRentals) {
@@ -139,5 +127,9 @@ public class RentalManager {
             }
         }
         return maxId + 1;
+    }
+    
+    public int getNextRentalId() {
+        return getNextId();
     }
 }

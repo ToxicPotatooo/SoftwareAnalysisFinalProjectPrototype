@@ -38,26 +38,14 @@ public class AccountManager {
         CsvHandler.csvWriter(data);
     }
     
-    public boolean createNewAccount(Customer customer) {
+    public void addAccount(Customer customer) {
         for (Customer c : listOfAccounts) {
             if (c.getAccountId() == customer.getAccountId()) {
-                return false;
+                throw new IllegalArgumentException("Account ID already exists.");
             }
         }
         listOfAccounts.add(customer);
         saveData();
-        return true;
-    }
-    
-    public boolean updateAccount(int accountId, Customer updatedCustomer) {
-        for (int i = 0; i < listOfAccounts.size(); i++) {
-            if (listOfAccounts.get(i).getAccountId() == accountId) {
-                listOfAccounts.set(i, updatedCustomer);
-                saveData();
-                return true;
-            }
-        }
-        return false;
     }
     
     public boolean deleteAccount(int accountId) {
@@ -75,6 +63,10 @@ public class AccountManager {
         return listOfAccounts;
     }
     
+    public ArrayList<Customer> getAccounts() {
+        return listOfAccounts;
+    }
+    
     public Customer getCustomerById(int id) {
         for (Customer c : listOfAccounts) {
             if (c.getAccountId() == id) {
@@ -84,13 +76,8 @@ public class AccountManager {
         return null;
     }
     
-    public Customer getCustomerByEmail(String email) {
-        for (Customer c : listOfAccounts) {
-            if (c.getEmail().equalsIgnoreCase(email)) {
-                return c;
-            }
-        }
-        return null;
+    public Customer findAccountById(int id) {
+        return getCustomerById(id);
     }
     
     public int getNextId() {
@@ -101,6 +88,14 @@ public class AccountManager {
             }
         }
         return maxId + 1;
+    }
+    
+    public int getNextAccountId() {
+        return getNextId();
+    }
+    
+    public void createNewAccount(Customer customer) {
+        addAccount(customer);
     }
     
     public boolean banCustomer(int accountId) {

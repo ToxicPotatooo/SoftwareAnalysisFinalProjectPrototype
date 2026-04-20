@@ -7,18 +7,23 @@ public class Account {
     private String lastName;
     private String phoneNumber;
     private String email;
+    private String hashPassword;
     
     
-    public Account (int accountId, String firstName, String lastName, 
-	    		String phoneNumber, String email) {
-	
-	this.accountId = accountId;
-	this.firstName = firstName;
-	this.lastName = lastName;
-	this.phoneNumber = phoneNumber;
-	this.email = email;
+    public Account(int accountId, String lastName, String firstName, 
+                    String phoneNumber, String email) {
+        this(accountId, lastName, firstName, phoneNumber, email, null);
     }
-    
+
+    public Account(int accountId, String lastName, String firstName, 
+                    String phoneNumber, String email, String hashPassword) {
+        this.accountId = accountId;
+        this.firstName = firstName;
+        this.lastName = lastName;
+        this.phoneNumber = phoneNumber;
+        this.email = email;
+        this.hashPassword = hashPassword;
+    }
     
     @Override
     public String toString() {
@@ -47,9 +52,13 @@ public class Account {
         return email;
     }
 
-//    public String getHashPassword() {
-//        return hashPassword;
-//    }
+    public String getHashPassword() {
+        return hashPassword;
+    }
+
+    public String toCSV() {
+        return accountId + "," + lastName + "," + firstName + "," + phoneNumber + "," + email + "," + hashPassword;
+    }
 
     public void setAccountId(int accountId) {
         this.accountId = accountId;
@@ -71,8 +80,8 @@ public class Account {
         this.email = email;
     }
 
-//    public void setHashPassword(String hashPassword) {
-//        this.hashPassword = hashPassword;
-//    }
+    public void setHashPassword(String hashPassword) {
+        this.hashPassword = hashPassword;
+    }
     
 }
