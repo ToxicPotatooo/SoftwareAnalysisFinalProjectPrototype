@@ -18,8 +18,8 @@ import utils.CsvHandler;
 import utils.DataArrays;
 
 /**
- * Manages the user interface for the Village Rentals application.
- * Provides a console-like menu system using Swing dialogs for all user interactions,
+ * Main user interface manager for the Village Rentals application.
+ * Provides a menu-driven console interface using Swing dialogs for all user interactions,
  * including equipment management, customer management, rental processing, and report viewing.
  */
 public class UIManager {
@@ -32,7 +32,8 @@ public class UIManager {
     
     /**
      * Constructs a UIManager and initializes the application.
-     * Loads data from CSV, initializes all managers, and displays the main menu.
+     * Loads data from CSV, initializes all managers, sets up manager dependencies,
+     * and displays the main menu.
      */
     public UIManager() {
         data = CsvHandler.csvReader();
@@ -45,8 +46,9 @@ public class UIManager {
     }
     
     /**
-     * Displays the main menu and handles user selection.
+     * Displays the main application menu and handles user selections.
      * Continues to show the menu until the user chooses to exit.
+     * Options include equipment management, customer management, rental processing, and reports.
      */
     public void showMainMenu() {
         while (true) {
@@ -55,10 +57,8 @@ public class UIManager {
                     1. Add Equipment
                     2. Delete Equipment
                     3. Add Customer
-                    4. Display All Equipment
-                    5. Display All Customers
-                    6. Process Rental
-                    7. Display All Rentals
+                    4. Process Rental
+                    5. Reports
                     0. Exit
                     Enter your choice:
                     """;
@@ -74,10 +74,39 @@ public class UIManager {
                 case "1" -> addEquipment();
                 case "2" -> deleteEquipment();
                 case "3" -> addCustomer();
-                case "4" -> showMessage(reportManager.buildEquipmentReport(equipmentManager.getListOfEquipment()), "Equipment List");
-                case "5" -> showMessage(reportManager.buildAccountReport(accountManager.getListOfAccounts()), "Customer List");
-                case "6" -> processRental();
-                case "7" -> showMessage(reportManager.buildRentalReport(rentalManager.getListOfRentals()), "Rental List");
+                case "4" -> processRental();
+                case "5" -> showReportsMenu();
+                default -> JOptionPane.showMessageDialog(null, "Invalid choice.");
+            }
+        }
+    }
+    
+    /**
+     * Displays the reports submenu with options for generating various business reports.
+     * Allows users to choose between sales by date, sales by customer, or equipment by category reports.
+     * Returns to the main menu when the user selects the back option.
+     */
+    private void showReportsMenu() {
+        while (true) {
+            String reportsMenu = """
+                    === REPORTS MENU ===
+                    1. Sales by Date Report
+                    2. Sales by Customer Report
+                    3. Equipment by Category Report
+                    0. Back to Main Menu
+                    Enter your choice:
+                    """;
+            
+            String choice = JOptionPane.showInputDialog(null, reportsMenu, "Village Rentals - Reports", JOptionPane.PLAIN_MESSAGE);
+            
+            if (choice == null || choice.trim().equals("0")) {
+                return;
+            }
+            
+            switch (choice.trim()) {
+                case "1" -> showSalesByDateReport();
+                case "2" -> showSalesByCustomerReport();
+                case "3" -> showItemsByCategoryReport();
                 default -> JOptionPane.showMessageDialog(null, "Invalid choice.");
             }
         }
@@ -107,6 +136,7 @@ public class UIManager {
     
     /**
      * Prompts the user for an equipment ID and deletes the corresponding equipment from the system.
+     * Displays success or failure messages based on whether the equipment was found.
      */
     private void deleteEquipment() {
         try {
@@ -193,6 +223,55 @@ public class UIManager {
     }
     
     /**
+     * Displays the Sales by Date Report.
+     * Prompts the user for start and end dates, then generates and displays the report.
+     */
+    private void showSalesByDateReport() {
+        try {
+            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+            Date startDate = sdf.parse(prompt("Enter start date (yyyy-MM-dd):"));
+            Date endDate = sdf.parse(prompt("Enter end date (yyyy-MM-dd):"));
+            
+            String report = reportManager.buildSalesByDateReport(
+                rentalManager.getListOfRentals(),
+                equipmentManager.getListOfEquipment(),
+                accountManager.getListOfAccounts(),
+                startDate,
+                endDate
+            );
+            showMessage(report, "Sales by Date Report");
+        } catch (ParseException e) {
+            JOptionPane.showMessageDialog(null, "Invalid date format. Use yyyy-MM-dd.");
+        } catch (IllegalArgumentException e) {
+            JOptionPane.showMessageDialog(null, e.getMessage());
+        }
+    }
+    
+    /**
+     * Displays the Sales by Customer Report.
+     * Generates and displays a report showing all customers with their rental history and totals.
+     */
+    private void showSalesByCustomerReport() {
+        String report = reportManager.buildSalesByCustomerReport(
+            rentalManager.getListOfRentals(),
+            equipmentManager.getListOfEquipment(),
+            accountManager.getListOfAccounts()
+        );
+        showMessage(report, "Sales by Customer Report");
+    }
+    
+    /**
+     * Displays the Equipment by Category Report.
+     * Generates and displays a report showing all equipment organized by their categories.
+     */
+    private void showItemsByCategoryReport() {
+        String report = reportManager.buildItemsByCategoryReport(
+            equipmentManager.getListOfEquipment()
+        );
+        showMessage(report, "Equipment by Category Report");
+    }
+    
+    /**
      * Displays a prompt dialog and returns the user's input.
      *
      * @param message the message to display in the prompt dialog
@@ -215,7 +294,7 @@ public class UIManager {
      * Displays a message in a scrollable text area dialog for viewing large amounts of text.
      *
      * @param message the message content to display
-     * @param title   the title of the dialog window
+     * @param title the title of the dialog window
      */
     private void showMessage(String message, String title) {
         JTextArea textArea = new JTextArea(message, 20, 50);
